@@ -1,9 +1,11 @@
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
+import { bootUpStore } from "./products/data/store";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.setGlobalPrefix('api');
 
   const config = new DocumentBuilder()
     .setTitle('Api Docs')
@@ -15,6 +17,7 @@ async function bootstrap() {
 
   SwaggerModule.setup('api/api-docs', app, document);
 
+  await bootUpStore();
   await app.listen(3000);
 }
 bootstrap();
