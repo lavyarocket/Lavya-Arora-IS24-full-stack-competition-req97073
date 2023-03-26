@@ -15,6 +15,7 @@ function App() {
   const [modalOpen, setModalOpen] = useState(false);
   const [isUpdateModal, setIsUpdateModal] = useState(false);
   const searchInput = useRef(null);
+  const productModalRef = useRef(null);
 
   const handleSearch = (selectedKeys, confirm, dataIndex) => {
     confirm();
@@ -168,7 +169,12 @@ function App() {
   }
 
   function renderAction(value, record, dataIndex) {
-    async function editRecord() {};
+    async function editRecord() {
+      productModalRef.current.setFormFields(value);
+
+      setIsUpdateModal(true);
+      setModalOpen(true);
+    };
     
     async function deleteRecord() {
       await axios.delete(`http://localhost:3000/api/products/${value.productId}`);
@@ -292,7 +298,7 @@ function App() {
           </div>
         </div>
       </main>
-      <ProductModal open={modalOpen} setOpen={setModalOpen} isUpdateModal={isUpdateModal} refetchData={fetchProductData}/>
+      <ProductModal ref={productModalRef} open={modalOpen} setOpen={setModalOpen} isUpdateModal={isUpdateModal} refetchData={fetchProductData}/>
       <Toaster />
     </>
   );

@@ -6,9 +6,9 @@ import {
   Select,
 } from "antd";
 import axios from "axios";
-import { useState } from "react";
+import { forwardRef, useImperativeHandle, useState } from "react";
 import toast from "react-hot-toast";
-import { Dayjs } from "dayjs";
+import Dayjs from "dayjs";
 
 const initialFormData = {
   productId: "",
@@ -20,9 +20,18 @@ const initialFormData = {
   methodology: "",
 }
 
-const ProductModal = ({ open, setOpen, isUpdateModal, refetchData }) => {
+const ProductModal = forwardRef(({ open, setOpen, isUpdateModal, refetchData }, ref) => {
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [formData, setFormData] = useState(initialFormData);
+
+  useImperativeHandle(ref, () => ({
+    setFormFields(data) {
+      console.log(data);
+      const deepCopiedData = JSON.parse(JSON.stringify(data));
+      deepCopiedData.startDate = Dayjs(deepCopiedData.startDate);
+      setFormData(deepCopiedData);
+    }
+  }));
 
   function onFormDataChange(value, key) {
     console.log(key, value);
@@ -36,7 +45,11 @@ const ProductModal = ({ open, setOpen, isUpdateModal, refetchData }) => {
     setConfirmLoading(true);
     
     try {
-      await addProduct();
+      if(isUpdateModal) {
+        await updateProduct();
+      } else {
+        await addProduct();
+      }
       setOpen(false);
       setFormData(initialFormData);
       refetchData();
@@ -53,6 +66,14 @@ const ProductModal = ({ open, setOpen, isUpdateModal, refetchData }) => {
     data.startDate = formData.startDate.format("YYYY/MM/DD");
     
     await axios.post("http://localhost:3000/api/products", data);
+  }
+
+  async function updateProduct() {
+    const data = JSON.parse(JSON.stringify(formData));
+
+    data.startDate = formData.startDate.format("YYYY/MM/DD");
+    
+    await axios.patch(`http://localhost:3000/api/products/${data.productId}`, data);
   }
 
   const handleCancel = () => {
@@ -123,5 +144,6 @@ const ProductModal = ({ open, setOpen, isUpdateModal, refetchData }) => {
       </Form>
     </Modal>
   );
-};
+});
+
 export default ProductModal;

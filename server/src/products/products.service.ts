@@ -37,6 +37,9 @@ export class ProductsService {
       if (updateProductDto.scrumMasterName) {
         existingProduct.scrumMasterName = updateProductDto.scrumMasterName;
       }
+      if (updateProductDto.Developers) {
+        existingProduct.Developers = updateProductDto.Developers;
+      }
       if (updateProductDto.startDate) {
         existingProduct.startDate = updateProductDto.startDate;
       }
