@@ -4,6 +4,7 @@ import toast, { Toaster } from "react-hot-toast";
 import { Button, Input, Space, Table } from "antd";
 import Highlighter from "react-highlight-words";
 import axios from "axios";
+import ProductModal from "./components/ProductModal";
 
 function App() {
   const [data, setData] = useState([]);
@@ -11,6 +12,8 @@ function App() {
   const [searchText, setSearchText] = useState("");
   const [searchedColumn, setSearchedColumn] = useState("");
   const [visibleEntriesCount, setVisibleEntriesCount] = useState(0);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [isUpdateModal, setIsUpdateModal] = useState(false);
   const searchInput = useRef(null);
 
   const handleSearch = (selectedKeys, confirm, dataIndex) => {
@@ -74,6 +77,7 @@ function App() {
         />
         <Space>
           <Button
+            type="primary"
             onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
             icon={<SearchOutlined />}
             size="small"
@@ -98,6 +102,16 @@ function App() {
         </Space>
       </div>
     );
+  }
+
+  function openAddModal() {
+    setIsUpdateModal(false);
+    setModalOpen(true);
+  }
+
+  function openUpdateModal() {
+    setIsUpdateModal(true);
+    setModalOpen(true);
   }
 
   function renderText(value, record, index, dataIndex) {
@@ -154,10 +168,17 @@ function App() {
   }
 
   function renderAction(value, record, dataIndex) {
+    async function editRecord() {};
+    
+    async function deleteRecord() {
+      await axios.delete(`http://localhost:3000/api/products/${value.productId}`);
+      await fetchProductData();
+    };
+    
     return (
       <Space size="middle">
-        <Button>Edit</Button>
-        <Button>Delete</Button>
+        <Button onClick={editRecord}>Edit</Button>
+        <Button onClick={deleteRecord}>Delete</Button>
       </Space>
     );
   }
@@ -171,7 +192,7 @@ function App() {
       setVisibleEntriesCount(response.data.length);
       setData(response.data);
     } catch (err) {
-      toast.err(err.response.data.message);
+      toast.error(err?.response?.data?.message);
     } finally {
       setIsDataLoading(false);
     }
@@ -187,7 +208,7 @@ function App() {
         <div className="h-full max-h-[70%] w-fit max-w-[90%] flex flex-col gap-4">
           <div className="flex items-center justify-between shrink-0">
             <span>Entries Displayed: {visibleEntriesCount}</span>
-            <Button>Add</Button>
+            <Button onClick={openAddModal}>Add</Button>
           </div>
           <div className="overflow-auto relative flex-1">
             <Table
@@ -271,6 +292,7 @@ function App() {
           </div>
         </div>
       </main>
+      <ProductModal open={modalOpen} setOpen={setModalOpen} isUpdateModal={isUpdateModal} refetchData={fetchProductData}/>
       <Toaster />
     </>
   );

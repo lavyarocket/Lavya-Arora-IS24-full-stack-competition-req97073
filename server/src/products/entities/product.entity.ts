@@ -1,7 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
 export class Product {
-    @ApiProperty({ example: 1234})
     productId: number;
 
     @ApiProperty({ example: 'Your Product Name' })
