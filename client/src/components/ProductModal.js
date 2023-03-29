@@ -5,80 +5,89 @@ import {
   Input,
   Select,
 } from "antd";
-import axios from "axios";
 import { forwardRef, useImperativeHandle, useState } from "react";
 import toast from "react-hot-toast";
 import Dayjs from "dayjs";
+import request from "helpers/request";
 
 const initialFormData = {
-  productId: "",
   productName: "",
   productOwnerName: "",
-  Developers: undefined,
+  Developers: [],
   scrumMasterName: "",
   startDate: null,
   methodology: "",
 }
 
-const ProductModal = forwardRef(({ open, setOpen, isUpdateModal, refetchData }, ref) => {
+const ProductModal = forwardRef(({ open, setOpen, isUpdateModal = false, refetchData }, ref) => {
   const [confirmLoading, setConfirmLoading] = useState(false);
-  const [formData, setFormData] = useState(initialFormData);
+  const [productId, setProductId] = useState(null); 
+  const [form] = Form.useForm();
+
 
   useImperativeHandle(ref, () => ({
     setFormFields(data) {
-      console.log(data);
       const deepCopiedData = JSON.parse(JSON.stringify(data));
       deepCopiedData.startDate = Dayjs(deepCopiedData.startDate);
-      setFormData(deepCopiedData);
+      
+      setProductId(deepCopiedData.productId);
+
+      delete deepCopiedData.productId;
+      
+      for(const [key, value] of Object.entries(deepCopiedData)) {
+        form.setFieldValue(key, value);
+      }
     }
   }));
 
-  function onFormDataChange(value, key) {
-    console.log(key, value);
-    setFormData(prev => ({
-      ...prev,
-      [key]: value,
-    }));
-  }
-
-  const handleOk = async () => {
+  const handleSubmit = async (formValues) => {
     setConfirmLoading(true);
-    
+
     try {
       if(isUpdateModal) {
-        await updateProduct();
+        await updateProduct(formValues);
       } else {
-        await addProduct();
+        await addProduct(formValues);
       }
+      const loadingToastId = toast.loading("Loading...");
+      await refetchData();
+      toast.dismiss(loadingToastId);
+      
       setOpen(false);
-      setFormData(initialFormData);
-      refetchData();
+      form.resetFields();
     } catch (err) {
-      toast.error(err?.response?.data?.message);
+      const errorMessage = err.response.data.message;
+
+      if(Array.isArray(errorMessage)) {
+        // Show only one error so the user is not flooded.
+        toast.error(errorMessage[0]);
+      } else {
+        toast.error(errorMessage);
+      }
     } finally {
       setConfirmLoading(false);
     }
   };
 
-  async function addProduct() {
-    const data = JSON.parse(JSON.stringify(formData));
+  async function addProduct(formValues) {
+    const data = JSON.parse(JSON.stringify(formValues));
 
-    data.startDate = formData.startDate.format("YYYY/MM/DD");
+    data.startDate = formValues.startDate.format("YYYY/MM/DD");
     
-    await axios.post("http://localhost:3000/api/products", data);
+    await request.post("/product", data);
   }
 
-  async function updateProduct() {
-    const data = JSON.parse(JSON.stringify(formData));
+  async function updateProduct(formValues) {
+    const data = JSON.parse(JSON.stringify(formValues));
 
-    data.startDate = formData.startDate.format("YYYY/MM/DD");
+    data.startDate = formValues.startDate.format("YYYY/MM/DD");
     
-    await axios.patch(`http://localhost:3000/api/products/${data.productId}`, data);
+    await request.patch(`/product/${productId}`, data);
   }
 
   const handleCancel = () => {
     setOpen(false);
-    setFormData(initialFormData);
+    form.resetFields();
   };
 
   const formItemLayout = {
@@ -92,40 +101,39 @@ const ProductModal = forwardRef(({ open, setOpen, isUpdateModal, refetchData }, 
     <Modal
       title={isUpdateModal ? "Update Product": "Add New Product" }
       open={open}
-      onOk={handleOk}
+      onOk={form.submit}
       confirmLoading={confirmLoading}
       onCancel={handleCancel}
     >
-      <Form className="pt-4" {...formItemLayout} style={{ maxWidth: 600 }}>
-        <Form.Item label="Product Name">
-          <Input value={formData.productName} onChange={(e)=>onFormDataChange(e.target.value, "productName")}/>
+      <Form form={form} onFinish={handleSubmit} initialValues={initialFormData} className="pt-4" {...formItemLayout} style={{ maxWidth: 600 }}>
+        <Form.Item rules={[{required: true, message: "Please enter your product name"}]} name="productName" label="Product Name">
+          <Input />
         </Form.Item>
-        <Form.Item label="Product Owner">
-          <Input value={formData.productOwnerName} onChange={(e)=>onFormDataChange(e.target.value, "productOwnerName")}/>
+        <Form.Item rules={[{required: true, message: "Please enter product owner name"}]} name="productOwnerName" label="Product Owner">
+          <Input />
         </Form.Item>
-        <Form.Item label="Developers" help="Enter comma separated list of developers">
+        <Form.Item rules={[{required: true, message: "Please enter atleast 1 Developer"}, {type: 'array', max: 5, message: "Can only have 5 Developers max"}]} name="Developers" label="Developers" tooltip="Enter comma separated list of developers">
         <Select
+          maxTagCount={5}
           mode="tags"
-          value={formData.Developers}
           style={{ width: '100%' }}
-          onChange={(val)=>onFormDataChange(val, "Developers")}
           tokenSeparators={[',']}
-          options={[]}
+          options={null}
+          dropdownRender={()=>null}
+          dropdownStyle={{display: "none"}}
         />
         </Form.Item>
-        <Form.Item label="Scrum Master">
-          <Input value={formData.scrumMasterName} onChange={(e)=>onFormDataChange(e.target.value, "scrumMasterName")}/>
+        <Form.Item rules={[{required: true, message: "Please enter scrum mastername"}]} name="scrumMasterName" label="Scrum Master">
+          <Input />
         </Form.Item>
-        <Form.Item label = "Start Date">
-          <DatePicker value={formData.startDate} onChange={(val)=>onFormDataChange(val, "startDate")} />
+        <Form.Item rules={[{required: true, message: "Please enter start date"}]} name="startDate" label = "Start Date">
+          <DatePicker />
         </Form.Item>
-        <Form.Item label = "Methodology">
+        <Form.Item rules={[{required: true, message: "Please select methodology"}]} name="methodology" label = "Methodology">
         <Select
           showSearch
           placeholder="Select methodology"
           optionFilterProp="children"
-          value={formData.methodology}
-          onChange={(val)=>onFormDataChange(val, "methodology")}
           filterOption={(input, option) =>
             (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
           }

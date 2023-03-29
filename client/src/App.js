@@ -3,8 +3,8 @@ import { useEffect, useState, useRef } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import { Button, Input, Space, Table } from "antd";
 import Highlighter from "react-highlight-words";
-import axios from "axios";
-import ProductModal from "./components/ProductModal";
+import request from "helpers/request";
+import ProductModal from "components/ProductModal";
 
 function App() {
   const [data, setData] = useState([]);
@@ -110,11 +110,6 @@ function App() {
     setModalOpen(true);
   }
 
-  function openUpdateModal() {
-    setIsUpdateModal(true);
-    setModalOpen(true);
-  }
-
   function renderText(value, record, index, dataIndex) {
     if (searchedColumn === dataIndex) {
       return (
@@ -177,7 +172,7 @@ function App() {
     };
     
     async function deleteRecord() {
-      await axios.delete(`http://localhost:3000/api/products/${value.productId}`);
+      await request.delete(`/product/${value.productId}`);
       await fetchProductData();
     };
     
@@ -193,7 +188,7 @@ function App() {
     setIsDataLoading(true);
 
     try {
-      const response = await axios.get("http://localhost:3000/api/products/");
+      const response = await request.get("/product");
       
       setVisibleEntriesCount(response.data.length);
       setData(response.data);
@@ -212,8 +207,12 @@ function App() {
     <>
       <main className="h-screen w-full p-8 flex items-center justify-center bg-[#F9FAFA]">
         <div className="h-full max-h-[70%] w-fit max-w-[90%] flex flex-col gap-4">
+          
           <div className="flex items-center justify-between shrink-0">
-            <span>Entries Displayed: {visibleEntriesCount}</span>
+            <div className="flex flex-col">
+              <span>Filtered Products Count: {visibleEntriesCount}</span>
+              <span>Total Products: {data.length}</span>
+            </div>
             <Button onClick={openAddModal}>Add</Button>
           </div>
           <div className="overflow-auto relative flex-1">
