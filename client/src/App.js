@@ -206,14 +206,17 @@ function App() {
   return (
     <>
       <main className="h-screen w-full p-8 flex items-center justify-center bg-[#F9FAFA]">
+        
         <div className="h-full max-h-[70%] w-fit max-w-[90%] flex flex-col gap-4">
           
           <div className="flex items-center justify-between shrink-0">
+          
             <div className="flex flex-col">
               <span>Filtered Products Count: {visibleEntriesCount}</span>
               <span>Total Products: {data.length}</span>
             </div>
-            <Button onClick={openAddModal}>Add</Button>
+            <center><h1>IMB Product Repository</h1></center>
+            <Button onClick={openAddModal}>Add New Product</Button>
           </div>
           <div className="overflow-auto relative flex-1">
             <Table
