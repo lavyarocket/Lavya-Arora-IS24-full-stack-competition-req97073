@@ -49,6 +49,7 @@ const ProductModal = forwardRef(({ open, setOpen, isUpdateModal = false, refetch
       } else {
         await addProduct(formValues);
       }
+
       const loadingToastId = toast.loading("Loading...");
       await refetchData();
       toast.dismiss(loadingToastId);
@@ -73,16 +74,25 @@ const ProductModal = forwardRef(({ open, setOpen, isUpdateModal = false, refetch
     const data = JSON.parse(JSON.stringify(formValues));
 
     data.startDate = formValues.startDate.format("YYYY/MM/DD");
-    
-    await request.post("/product", data);
+    try {
+      await request.post("/product", data);
+      toast.success("Product Added Succesfully!");
+    } catch (err) {
+      throw err;
+    }
   }
 
   async function updateProduct(formValues) {
     const data = JSON.parse(JSON.stringify(formValues));
 
     data.startDate = formValues.startDate.format("YYYY/MM/DD");
-    
-    await request.patch(`/product/${productId}`, data);
+    try {
+      await request.patch(`/product/${productId}`, data);
+      
+      toast.success("Product Updated Succesfully!");
+    } catch (err) {
+      throw err;
+    }
   }
 
   const handleCancel = () => {

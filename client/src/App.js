@@ -172,8 +172,14 @@ function App() {
     };
     
     async function deleteRecord() {
-      await request.delete(`/product/${value.productId}`);
-      await fetchProductData();
+      try {
+        await request.delete(`/product/${value.productId}`);
+        await fetchProductData();
+
+        toast.success("Product Deleted Succesfully!")
+      } catch (err) {
+        toast.error(err.response.data.message);
+      }
     };
     
     return (
@@ -215,7 +221,7 @@ function App() {
               <span>Filtered Products Count: {visibleEntriesCount}</span>
               <span>Total Products: {data.length}</span>
             </div>
-            <center><h1>IMB Product Repository</h1></center>
+            <h1>IMB Product Repository</h1>
             <Button onClick={openAddModal}>Add New Product</Button>
           </div>
           <div className="overflow-auto relative flex-1">
