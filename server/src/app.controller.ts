@@ -2,6 +2,7 @@ import { Controller, Get, HttpCode } from '@nestjs/common';
 import { AppService } from './app.service';
 import { ApiOkResponse } from '@nestjs/swagger';
 
+//Health Checkpoint Setup
 @Controller()
 export class AppController {
   constructor(private readonly appService: AppService) {}

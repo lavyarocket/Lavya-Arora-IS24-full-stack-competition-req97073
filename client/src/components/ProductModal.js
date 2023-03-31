@@ -19,6 +19,7 @@ const initialFormData = {
   methodology: "",
 }
 
+//Add + Update Product Functionality in this file
 const ProductModal = forwardRef(({ open, setOpen, isUpdateModal = false, refetchData }, ref) => {
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [productId, setProductId] = useState(null); 
@@ -40,6 +41,7 @@ const ProductModal = forwardRef(({ open, setOpen, isUpdateModal = false, refetch
     }
   }));
 
+  //Handle behaviour on submit action based on Add or Update
   const handleSubmit = async (formValues) => {
     setConfirmLoading(true);
 
@@ -70,6 +72,7 @@ const ProductModal = forwardRef(({ open, setOpen, isUpdateModal = false, refetch
     }
   };
 
+  //Add Product Functionality
   async function addProduct(formValues) {
     const data = JSON.parse(JSON.stringify(formValues));
 
@@ -82,6 +85,7 @@ const ProductModal = forwardRef(({ open, setOpen, isUpdateModal = false, refetch
     }
   }
 
+  //Update Product Functionality
   async function updateProduct(formValues) {
     const data = JSON.parse(JSON.stringify(formValues));
 
@@ -95,11 +99,13 @@ const ProductModal = forwardRef(({ open, setOpen, isUpdateModal = false, refetch
     }
   }
 
+  //Handle Cancel Behaviour
   const handleCancel = () => {
     setOpen(false);
     form.resetFields();
   };
 
+  //Handle Form Layout
   const formItemLayout = {
     labelCol: {
       xs: { span: 24 },

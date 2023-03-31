@@ -5,10 +5,12 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { Product } from "./entities/product.entity";
 
+//API Endpoints Response code Setup for Products
 @Controller('product')
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
+  //Add New Product
   @ApiOkResponse({ type: Product, status: HttpStatus.CREATED })
   @Post()
   @HttpCode(HttpStatus.CREATED)
@@ -16,6 +18,7 @@ export class ProductController {
     return this.productService.create(createProductDto);
   }
 
+  //Find all Products
   @ApiOkResponse({ type: Product, isArray: true, status: HttpStatus.OK })
   @Get()
   @HttpCode(HttpStatus.OK)
@@ -23,6 +26,7 @@ export class ProductController {
     return this.productService.findAll();
   }
 
+  //Find a Given Product
   @ApiOkResponse({ type: Product, status: HttpStatus.OK })
   @Get(':id')
   @HttpCode(HttpStatus.OK)
@@ -30,6 +34,7 @@ export class ProductController {
     return this.productService.findOne(id);
   }
 
+  //Update a given product entry
   @ApiOkResponse({ type: Product, status: HttpStatus.OK })
   @ApiBadRequestResponse({status: HttpStatus.BAD_REQUEST})
   @Patch(':id')
@@ -38,6 +43,7 @@ export class ProductController {
     return this.productService.update(id, updateProductDto);
   }
 
+  //Delete a given Product Entry
   @ApiOkResponse({status: HttpStatus.NO_CONTENT})
   @ApiBadRequestResponse({status: HttpStatus.BAD_REQUEST})
   @Delete(':id')

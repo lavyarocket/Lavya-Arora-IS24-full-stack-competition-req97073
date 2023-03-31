@@ -6,14 +6,17 @@ import { UpdateProductDto } from '../dto/update-product.dto';
 
 let store: { data: Product[] } = { data: [] };
 
+//Writeback data for persistence
 function syncToStorage() {
   fs.writeFileSync(path.join(__dirname, './mock.json'), JSON.stringify(store.data));
 }
 
+//Add New Product Functionality
 function addData(data: Product) {
   let uidLength = 8, collisionCounter = 0;
   let uid = Nanoid.nanoid(uidLength);
   
+  //Mitigating Collisions of Product Id
   while(store.data.some(e=>e.productId === uid)) {
     // if collides more than 3 times, increase length upto a max of 21 
     if(collisionCounter==3) {
@@ -32,12 +35,14 @@ function addData(data: Product) {
   return data;
 }
 
+//Delete a given Product Entry
 function deleteData(id: string) {
   store.data = store.data.filter(e=>e.productId!=id);
 
   syncToStorage();
 }
 
+//Update a given Product Entry
 function updateData(id: string, updateProductDto: UpdateProductDto) {
   const index = store.data.findIndex(e=>e.productId == id);
   
@@ -64,6 +69,7 @@ function updateData(id: string, updateProductDto: UpdateProductDto) {
   return store.data[index];
 }
 
+//Retrieve Data from mock.json and load it in memory
 async function bootUpStore() {
   await import("./mock.json").then(data=>{
     for(const product of data) {

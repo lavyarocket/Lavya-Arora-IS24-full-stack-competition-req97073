@@ -20,12 +20,14 @@ async function bootstrap() {
     origin: '*',
   });
 
+  //Configuration for API Docs
   const config = new DocumentBuilder()
     .setTitle('Api Docs')
     .setDescription('Api Docs')
     .setVersion('1.0')
     .build();
 
+  //Setting up Swagger Module
   const document = SwaggerModule.createDocument(app, config);
 
   SwaggerModule.setup('api/api-docs', app, document);

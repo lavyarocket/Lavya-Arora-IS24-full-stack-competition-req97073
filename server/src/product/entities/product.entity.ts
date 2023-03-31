@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
+//Define class for Product based on Schema (Used for Swagger Documentation)
 export class Product {
     @ApiProperty({ example: "Am3Vz-e1" })
     productId?: string;

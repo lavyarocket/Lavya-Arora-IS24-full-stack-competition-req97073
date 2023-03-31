@@ -6,6 +6,7 @@ import Highlighter from "react-highlight-words";
 import request from "helpers/request";
 import ProductModal from "components/ProductModal";
 
+//Main Frontend App, contains most of the frontend functionality
 function App() {
   const [data, setData] = useState([]);
   const [isDataLoading, setIsDataLoading] = useState(false);
@@ -17,18 +18,21 @@ function App() {
   const searchInput = useRef(null);
   const productModalRef = useRef(null);
 
+  //Handle Search on Developers and Scrum Master
   const handleSearch = (selectedKeys, confirm, dataIndex) => {
     confirm();
     setSearchText(selectedKeys[0]);
     setSearchedColumn(dataIndex);
   };
 
+  //Reset after Searching
   const handleReset = (clearFilters, confirm) => {
     clearFilters();
     setSearchText("");
     confirm();
   };
 
+  //Define Filter Icon
   function filterIcon(filtered) {
     return (
       <SearchOutlined
@@ -39,19 +43,22 @@ function App() {
     );
   }
 
+  //Send Filter Call
   function onFilter(value, record, dataIndex) {
     return record[dataIndex]
-    .toString()
-    .toLowerCase()
-    .includes(value.toLowerCase());
+      .toString()
+      .toLowerCase()
+      .includes(value.toLowerCase());
   }
 
+  //Filter Dropdown Behaviour change
   function onFilterDropdownOpenChange(visible) {
     if (visible) {
       setTimeout(() => searchInput.current?.select(), 100);
     }
   }
 
+  //Filter Dropdown Behaviour
   function filterDropdown(
     { setSelectedKeys, selectedKeys, confirm, clearFilters, close },
     dataIndex,
@@ -90,9 +97,7 @@ function App() {
             Search
           </Button>
           <Button
-            onClick={() =>
-              clearFilters && handleReset(clearFilters, confirm)
-            }
+            onClick={() => clearFilters && handleReset(clearFilters, confirm)}
             size="small"
             style={{
               width: 90,
@@ -110,6 +115,7 @@ function App() {
     setModalOpen(true);
   }
 
+  //Highlight Searched Text
   function renderText(value, record, index, dataIndex) {
     if (searchedColumn === dataIndex) {
       return (
@@ -128,10 +134,12 @@ function App() {
     }
   }
 
+  //Render All Data
   function renderDate(date, record, dataIndex) {
     return date;
   }
 
+  //Show Searched Entries
   function renderArray(values, record, index, dataIndex) {
     if (searchedColumn === dataIndex) {
       return (
@@ -163,25 +171,27 @@ function App() {
     }
   }
 
+  //Form Behaviour
   function renderAction(value, record, dataIndex) {
     async function editRecord() {
       productModalRef.current.setFormFields(value);
 
       setIsUpdateModal(true);
       setModalOpen(true);
-    };
-    
-    async function deleteRecord() {
-      try {
-        await request.delete(`/product/${value.productId}`);
-        await fetchProductData();
+    }
 
-        toast.success("Product Deleted Succesfully!")
-      } catch (err) {
-        toast.error(err.response.data.message);
-      }
-    };
-    
+  //Delete record Functionality
+  async function deleteRecord() {
+    try {
+      await request.delete(`/product/${value.productId}`);
+      await fetchProductData();
+
+      toast.success("Product Deleted Succesfully!");
+    } catch (err) {
+      toast.error(err.response.data.message);
+    }
+  }
+
     return (
       <Space size="middle">
         <Button onClick={editRecord}>Edit</Button>
@@ -190,12 +200,13 @@ function App() {
     );
   }
 
+  //Get all products functionality
   async function fetchProductData() {
     setIsDataLoading(true);
 
     try {
       const response = await request.get("/product");
-      
+
       setVisibleEntriesCount(response.data.length);
       setData(response.data);
     } catch (err) {
@@ -209,14 +220,12 @@ function App() {
     fetchProductData();
   }, []);
 
+  //Setup Table to meet requirements
   return (
     <>
       <main className="h-screen w-full p-8 flex items-center justify-center bg-[#F9FAFA]">
-        
         <div className="h-full max-h-[70%] w-fit max-w-[90%] flex flex-col gap-4">
-          
           <div className="flex items-center justify-between shrink-0">
-          
             <div className="flex flex-col">
               <span>Filtered Products Count: {visibleEntriesCount}</span>
               <span>Total Products: {data.length}</span>
@@ -231,7 +240,12 @@ function App() {
               pagination={false}
               sticky={true}
               className="max-w-full"
-              onChange={(pagination, filters, sorter, { currentDataSource })=>{
+              onChange={(
+                pagination,
+                filters,
+                sorter,
+                { currentDataSource }
+              ) => {
                 setVisibleEntriesCount(currentDataSource.length);
               }}
             >
@@ -261,8 +275,8 @@ function App() {
                 title="Developers"
                 dataIndex="Developers"
                 key="Developers"
-                render={(...args)=>renderArray(...args, "Developers")}
-                onFilter={(...args)=>onFilter(...args, "Developers")}
+                render={(...args) => renderArray(...args, "Developers")}
+                onFilter={(...args) => onFilter(...args, "Developers")}
                 filterDropdown={(props) =>
                   filterDropdown(props, "Developers", "Developer")
                 }
@@ -274,8 +288,8 @@ function App() {
                 title="Scrum Master"
                 dataIndex="scrumMasterName"
                 key="scrumMasterName"
-                render={(...args)=>renderText(...args, "scrumMasterName")}
-                onFilter={(...args)=>onFilter(...args, "scrumMasterName")}
+                render={(...args) => renderText(...args, "scrumMasterName")}
+                onFilter={(...args) => onFilter(...args, "scrumMasterName")}
                 filterDropdown={(props) =>
                   filterDropdown(props, "scrumMasterName", "Scrum Master")
                 }
@@ -306,7 +320,13 @@ function App() {
           </div>
         </div>
       </main>
-      <ProductModal ref={productModalRef} open={modalOpen} setOpen={setModalOpen} isUpdateModal={isUpdateModal} refetchData={fetchProductData}/>
+      <ProductModal
+        ref={productModalRef}
+        open={modalOpen}
+        setOpen={setModalOpen}
+        isUpdateModal={isUpdateModal}
+        refetchData={fetchProductData}
+      />
       <Toaster />
     </>
   );

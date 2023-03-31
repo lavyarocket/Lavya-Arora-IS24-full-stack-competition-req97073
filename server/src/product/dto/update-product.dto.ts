@@ -2,6 +2,7 @@ import { PartialType, ApiProperty } from '@nestjs/swagger';
 import { ArrayMaxSize, ArrayNotEmpty, IsArray, IsIn, IsNotEmpty, IsOptional, Matches } from 'class-validator';
 import { CreateProductDto } from './create-product.dto';
 
+//Define class for Product based on Schema (Used to Update given Product Entry)
 export class UpdateProductDto extends PartialType(CreateProductDto) {
     @IsNotEmpty()
     @IsOptional()
