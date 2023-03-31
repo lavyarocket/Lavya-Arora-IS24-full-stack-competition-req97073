@@ -20,9 +20,9 @@ This will start the server and open the application in your default browser. The
 ### Technologies Used:
 
 #### Frontend:
-ReactJS
-TailwindCSS
-AntDesign
+ReactJS  
+TailwindCSS  
+AntDesign  
 
 ReactJS is a popular JavaScript library used for building user interfaces. TailwindCSS is a utility-first CSS framework that helps you quickly create custom designs. AntDesign is a UI design language and React-based library that provides a set of high-quality React components.
 
