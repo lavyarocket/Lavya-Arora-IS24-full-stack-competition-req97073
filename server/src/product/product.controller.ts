@@ -1,5 +1,5 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, HttpStatus, HttpCode } from '@nestjs/common';
-import { ApiBadRequestResponse, ApiNotFoundResponse, ApiOkResponse } from '@nestjs/swagger';
+import { ApiBadRequestResponse, ApiNotFoundResponse, ApiOkResponse, ApiCreatedResponse } from '@nestjs/swagger';
 import { ProductService } from './product.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
@@ -11,7 +11,7 @@ export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
   // Add New Product
-  @ApiOkResponse({ type: Product, status: HttpStatus.CREATED })
+  @ApiCreatedResponse({ type: Product, status: HttpStatus.CREATED })
   @ApiBadRequestResponse({ status: HttpStatus.BAD_REQUEST })
   @Post()
   @HttpCode(HttpStatus.CREATED)

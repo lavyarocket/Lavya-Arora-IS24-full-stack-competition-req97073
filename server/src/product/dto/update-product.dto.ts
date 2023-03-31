@@ -19,7 +19,7 @@ export class UpdateProductDto extends PartialType(CreateProductDto) {
     @ArrayNotEmpty()
     @IsArray()
     @IsOptional()
-    @ApiProperty({ example: '[Dev1, Dev2, Dev3]', type: 'string', isArray: true, required: false })
+    @ApiProperty({ example: ["Dev1", "Dev2", "Dev3"], type: 'string', isArray: true, required: false })
     Developers: string[];
 
     @Matches(/^[a-z0-9 ]+$/i)
@@ -31,12 +31,12 @@ export class UpdateProductDto extends PartialType(CreateProductDto) {
     @Matches(/^\d{4}\/\d{2}\/\d{2}$/, { message: "startDate must be of the format YYYY/MM/DD" })
     @IsNotEmpty()
     @IsOptional()
-    @ApiProperty({ example: 'YYYY/MM/DD', required: false })
+    @ApiProperty({ example: '2023/31/03', required: false })
     startDate: string;
 
     @IsIn(['Agile', 'Waterfall'])
     @IsNotEmpty()
     @IsOptional()
-    @ApiProperty({ example: 'Agile|Waterfall', required: false })
+    @ApiProperty({ example: 'Agile', required: false })
     methodology: string;
 }

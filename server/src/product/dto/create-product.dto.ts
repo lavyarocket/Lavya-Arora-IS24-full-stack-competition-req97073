@@ -15,7 +15,7 @@ export class CreateProductDto {
     @ArrayMaxSize(5)
     @ArrayNotEmpty()
     @IsArray()
-    @ApiProperty({ example: '[Dev1, Dev2, Dev3]', type: 'string', isArray: true, required: true })
+    @ApiProperty({ example: ['Dev1', 'Dev2', 'Dev3'], type: 'string', isArray: true, required: true })
     Developers: string[];
 
     @Matches(/^[a-z0-9 ]+$/i)
@@ -25,12 +25,12 @@ export class CreateProductDto {
 
     @Matches(/^\d{4}\/\d{2}\/\d{2}$/, { message: "startDate must be of the format YYYY/MM/DD" })
     @IsNotEmpty()
-    @ApiProperty({ example: 'YYYY/MM/DD', required: true })
+    @ApiProperty({ example: '2023/03/31', required: true })
     startDate: string;
 
     @IsIn(['Agile', 'Waterfall'])
     @IsNotEmpty()
-    @ApiProperty({ example: 'Agile|Waterfall', required: true })
+    @ApiProperty({ example: 'Waterfall', required: true })
     methodology: string;
 
 }
