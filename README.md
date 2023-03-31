@@ -1,9 +1,9 @@
 # Lavya-Arora-IS24-full-stack-competition-req97073
 
-This repository contains the code for a web application built with ReactJS, TailwindCSS, AntDesign and NestJs for the IS24-Full-Stack Competition.
+This repository contains the code for a web application built with ReactJS, TailwindCSS, AntDesign and NestJs for the IS24-Full-Stack Competition. Made by Lavya Arora
 
 ### Installation
-Before running the application, make sure you have Node.js installed on your system. To install the required dependencies, open a terminal and navigate to the project directory. Run the following command:
+Before running the application, make sure you have Node.js installed on your system. To install the required dependencies, open a terminal and navigate to the root project directory. Run the following command:
 
 `npm run setup`
 
@@ -15,7 +15,7 @@ To start the application, run the following command:
 
 `npm run start`
 
-This will start the server and open the application in your default browser. The frontend can be accessed at localhost:4000, while the backend is available at localhost:3000.
+This will start the server and open the application in your default browser. The frontend can be accessed at localhost:4000, while the backend is available at localhost:3000. To restart the server, just use the start command, no need to setup the repository again.
 
 ### Technologies Used:
 
