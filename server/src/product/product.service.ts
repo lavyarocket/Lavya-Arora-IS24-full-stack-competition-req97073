@@ -1,9 +1,9 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, NotFoundException, Injectable } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import store, { addData, updateData, deleteData } from './data/store';
 
-//Product Endpoints Setup
+// Product Service - contains functionality used by controller
 @Injectable()
 export class ProductService {
   //Create New Product Endpoint
@@ -11,37 +11,35 @@ export class ProductService {
     return addData(createProductDto);
   }
 
-  //Get list of all Products Endpoint
+  // Returns list of all Products
   findAll() {
     return store.data;
   }
 
-  //Find a given Product based on Product ID Endpoint
+  // Find a product based on Product ID
   findOne(id: string) {
-    return store.data.find((e) => e.productId === id) || {};
+    const product = store.data.find((e) => e.productId === id);
+
+    if(product) {
+      return product;
+    } else {
+      throw new NotFoundException(`Product ID specified does not exist.`);
+    }
   }
 
   //Update a given Product Entry (Uses findOne nested within)
   update(id: string, updateProductDto: UpdateProductDto) {
-    const _existingProduct = this.findOne(id);
+    this.findOne(id); // Using as check for product with id to exist, will throw err if not found
 
-    if (Object.keys(_existingProduct).length > 0) {
-      return updateData(id, updateProductDto);
-    } else {
-      throw new BadRequestException('Product ID specified does not exist.');
-    }
+    return updateData(id, updateProductDto);
   }
 
   //Delete a product entry Endpoint
   remove(id: string) {
-    const _existingProduct = this.findOne(id);
+    this.findOne(id); // Using as check for product with id to exist, will throw err if not found
     
-    if(Object.keys(_existingProduct).length > 0) {
-      deleteData(id);
-    } else {
-      throw new BadRequestException('Product ID specified does not exist.');
-    }
-
+    deleteData(id);
+    
     return null;
   }
 }

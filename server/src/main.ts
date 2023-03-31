@@ -8,7 +8,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   
   // Pipes are Nest's way of data validation in apis. 
-  // Transform = true enabled implicit conversion of request payload to dto types 
+  // Transform = true enables implicit conversion of request payload to dto types 
   app.useGlobalPipes(new ValidationPipe({
     transform: true,
   }));

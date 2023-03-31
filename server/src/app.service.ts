@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
-//API Call setup for api/health endpoint
 @Injectable()
 export class AppService {
+  // API for api/health endpoint
   health() {
     return {
       status: 'OK',

@@ -6,7 +6,7 @@ import Highlighter from "react-highlight-words";
 import request from "helpers/request";
 import ProductModal from "components/ProductModal";
 
-//Main Frontend App, contains most of the frontend functionality
+// Main Entrypoint
 function App() {
   const [data, setData] = useState([]);
   const [isDataLoading, setIsDataLoading] = useState(false);
@@ -18,21 +18,20 @@ function App() {
   const searchInput = useRef(null);
   const productModalRef = useRef(null);
 
-  //Handle Search on Developers and Scrum Master
+  // selectedKeys - ['key1','key2'], confirm - cb for searching, dataIndex - column/datakey
   const handleSearch = (selectedKeys, confirm, dataIndex) => {
     confirm();
     setSearchText(selectedKeys[0]);
     setSearchedColumn(dataIndex);
   };
 
-  //Reset after Searching
+  // Reset search term, clear AntDesigns filters
   const handleReset = (clearFilters, confirm) => {
     clearFilters();
     setSearchText("");
     confirm();
   };
 
-  //Define Filter Icon
   function filterIcon(filtered) {
     return (
       <SearchOutlined
@@ -43,22 +42,23 @@ function App() {
     );
   }
 
-  //Send Filter Call
+  // Filter Callback, value - string being searched for, record - row, dataIndex - column/datakey
   function onFilter(value, record, dataIndex) {
+    console.log(value, record, dataIndex);
+
     return record[dataIndex]
       .toString()
       .toLowerCase()
       .includes(value.toLowerCase());
   }
 
-  //Filter Dropdown Behaviour change
   function onFilterDropdownOpenChange(visible) {
     if (visible) {
       setTimeout(() => searchInput.current?.select(), 100);
     }
   }
 
-  //Filter Dropdown Behaviour
+  // Filter Dropdown Component, contains search field + search, reset buttons
   function filterDropdown(
     { setSelectedKeys, selectedKeys, confirm, clearFilters, close },
     dataIndex,
@@ -115,7 +115,7 @@ function App() {
     setModalOpen(true);
   }
 
-  //Highlight Searched Text
+  // Renderer for text type fields
   function renderText(value, record, index, dataIndex) {
     if (searchedColumn === dataIndex) {
       return (
@@ -134,12 +134,12 @@ function App() {
     }
   }
 
-  //Render All Data
+  // Renderer for date type field
   function renderDate(date, record, dataIndex) {
     return date;
   }
 
-  //Show Searched Entries
+  // Renderer for array type field
   function renderArray(values, record, index, dataIndex) {
     if (searchedColumn === dataIndex) {
       return (
@@ -171,7 +171,7 @@ function App() {
     }
   }
 
-  //Form Behaviour
+  // Renderer for row actions
   function renderAction(value, record, dataIndex) {
     async function editRecord() {
       productModalRef.current.setFormFields(value);
@@ -180,7 +180,7 @@ function App() {
       setModalOpen(true);
     }
 
-  //Delete record Functionality
+  // Delete and refetch
   async function deleteRecord() {
     try {
       await request.delete(`/product/${value.productId}`);
@@ -200,7 +200,7 @@ function App() {
     );
   }
 
-  //Get all products functionality
+  // Get all products from api
   async function fetchProductData() {
     setIsDataLoading(true);
 
@@ -216,11 +216,11 @@ function App() {
     }
   }
 
+  // Fetch all products on mount
   useEffect(() => {
     fetchProductData();
   }, []);
 
-  //Setup Table to meet requirements
   return (
     <>
       <main className="h-screen w-full p-8 flex items-center justify-center bg-[#F9FAFA]">

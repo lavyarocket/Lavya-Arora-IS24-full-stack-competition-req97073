@@ -19,13 +19,13 @@ const initialFormData = {
   methodology: "",
 }
 
-//Add + Update Product Functionality in this file
+// Modal containing the add/update product form
 const ProductModal = forwardRef(({ open, setOpen, isUpdateModal = false, refetchData }, ref) => {
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [productId, setProductId] = useState(null); 
   const [form] = Form.useForm();
 
-
+  // Provides setFormFields() to parent component using ref
   useImperativeHandle(ref, () => ({
     setFormFields(data) {
       const deepCopiedData = JSON.parse(JSON.stringify(data));
@@ -41,7 +41,7 @@ const ProductModal = forwardRef(({ open, setOpen, isUpdateModal = false, refetch
     }
   }));
 
-  //Handle behaviour on submit action based on Add or Update
+  // Submit form data to API, refetch data to update locally
   const handleSubmit = async (formValues) => {
     setConfirmLoading(true);
 
@@ -72,7 +72,6 @@ const ProductModal = forwardRef(({ open, setOpen, isUpdateModal = false, refetch
     }
   };
 
-  //Add Product Functionality
   async function addProduct(formValues) {
     const data = JSON.parse(JSON.stringify(formValues));
 
@@ -85,7 +84,6 @@ const ProductModal = forwardRef(({ open, setOpen, isUpdateModal = false, refetch
     }
   }
 
-  //Update Product Functionality
   async function updateProduct(formValues) {
     const data = JSON.parse(JSON.stringify(formValues));
 
@@ -99,13 +97,12 @@ const ProductModal = forwardRef(({ open, setOpen, isUpdateModal = false, refetch
     }
   }
 
-  //Handle Cancel Behaviour
+  // Reset fields, close modal on cancel
   const handleCancel = () => {
     setOpen(false);
     form.resetFields();
   };
 
-  //Handle Form Layout
   const formItemLayout = {
     labelCol: {
       xs: { span: 24 },

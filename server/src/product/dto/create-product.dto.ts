@@ -1,7 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { ArrayMaxSize, ArrayNotEmpty,  IsArray, IsIn, IsNotEmpty, Matches } from "class-validator";
 
-//Define class for Product based on Schema (Used for Creation of New Product Entry)
+// Define Network DTO for Product creation
 export class CreateProductDto {
     @IsNotEmpty()
     @ApiProperty({ example: 'ProductName', type: 'string', required: true })
